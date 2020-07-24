@@ -1,0 +1,5 @@
+﻿@model IEnumerable<MovieStore.Core.Entities.Genre>
+@foreach (var genre in Model)
+{
+    <a class="dropdown-item" href="/Movies/Genres?genreId"@genre.Id> @genre.Name </a>
+}

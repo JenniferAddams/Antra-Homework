@@ -1,0 +1,208 @@
+﻿@model MovieStore.Core.Entities.Detail
+
+
+    <div class="container-fluid" style="margin:0px;padding:0px;border:0px">
+        <div class="row" style="margin:0px;padding:0px;border:0px ; background-color:black;">
+            <div class="col-3">
+                <img src="@Model.DetailMovie.PosterUrl" alt="Movie Poster for @Model.DetailMovie.Title" class="img-thumbnail " style="border-radius:0px;margin:0px;border:0px;padding:0px" />
+            </div>
+            <div class="col-6">
+                <h2><p class="text-light">@Model.DetailMovie.Title</p></h2>
+                <p class="text-light">@Model.DetailMovie.Tagline</p>
+                <p class="text-light">
+                    @foreach (var g in Model.DetailGenre)
+                    {
+                        <a href="#" class="badge badge-secondary">@g.Name</a>
+                    }
+                </p>
+                <p><a href="#" class="badge badge-warning">@Model.DetailRating.ToString("F")</a></p>
+                <p class="text-light">@Model.DetailMovie.Overview</p>
+            </div>
+            <div class="col-3">
+                <ul class="list-group list-group-flush">
+
+                    @if (Model.IsFavorited)
+                    {
+                        <li class="list-group-item" style="background-color:black">
+                            <form method="post" asp-controller="User" asp-action="DeleteFavorite">
+                                <input type="hidden" value="@Model.DetailCurrentUserId" name="UserId" />
+                                <input type="hidden" value="@Model.DetailMovie.Id" name="MovieId" />
+                                <button type="submit">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="list-group-item" style="background-color:black">
+                            <form method="post" asp-controller="User" asp-action="Favorite">
+                                <input type="hidden" value="@Model.DetailCurrentUserId" name="UserId" />
+                                <input type="hidden" value="@Model.DetailMovie.Id" name="MovieId" />
+                                <button type="submit">
+                                    <i class="far fa-heart"></i>
+                                </button>
+
+                            </form>
+                        </li>
+                    }
+
+
+
+                    <li class="list-group-item" style="background-color:black">
+                        @if (!Model.IsReviewed)
+                        {
+                            <button type="button" class="btn btn-light " data-toggle="modal" data-target="#WriteReviewModel">
+                                <i class="far fa-edit mr-1"></i>
+                                REVIEW
+                            </button>
+                        }
+                        else
+                        {
+                            <p class="text-light">you have reviewed this movie</p>
+                        }
+
+
+                    </li>
+                    <button type="button" class="btn btn-dark " >
+                        
+                            <i class="fas fa-play" style="color:white"><text class="text-light">TRAILER</text></i>
+                        
+                        </button>
+                        <li class="list-group-item" style="background-color:black">
+
+                            @if (Model.isPurchased)
+                            {
+                                <button type="button" class="btn btn-success btn-lg btn-block btn-sm">
+                                    WATCH MOVIE
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-warning btn-lg " data-toggle="modal" data-target="#ConfirmPurchaseModel">
+                                    BUY @Model.DetailMovie.Price
+                                </button>
+                            }
+
+
+
+                        </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <h3>MOVIE FACTS</h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="far fa-calendar-alt">
+                            RelaceDate <span class="badge badge-dark">@Model.DetailMovie.ReleaseDate.Value.ToString("MM:dd:yyyy")</span>
+                        </i>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-hourglass-half">
+                            Run Time <span class="badge badge-dark">@Model.DetailMovie.RunTime m</span>
+                        </i>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="far fa-money-bill-alt">
+                            Box Office <span class="badge badge-dark"> @string.Format("{0:C}", @Model.DetailMovie.Revenue);</span>
+                        </i>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-dollar-sign">
+                            Budget  <span class="badge badge-dark">@string.Format("{0:C}", @Model.DetailMovie.Revenue)</span>
+                        </i>
+                    </li>
+                    <li class="list-group-item"><i class="fab fa-imdb"></i><i class="fas fa-share-square"></i></li>
+                </ul>
+            </div>
+            <div class="col-8">
+                <h3>CAST</h3>
+                <ul class="list-group list-group-flush">
+                    @foreach (var c in Model.DetailMovie.MovieCasts)
+                    {
+                        <li class="list-group-item">
+                            <img src="@c.Cast.ProfilePath" alt="Alternate Text" class="rounded-circle" style="width:30px;height:30px" />
+
+                            @c.Cast.Name
+                            @c.Character
+                            
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col">
+
+            </div>
+        </div>
+    </div>
+
+
+    <form method="post" asp-controller="User" asp-action="Purchase">
+        <div class="modal fade" id="ConfirmPurchaseModel" tabindex="-1" role="dialog" aria-labelledby="buyMovieModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p>Are you sure you wanna buy</p>
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5 class="modal-title" id="exampleModalLabel">@Model.DetailMovie. which is $@Model.DetailMovie.Price </h5>
+                    </div>
+                    <input type="hidden" value="@Model.DetailMovie.Id" name="MovieId" />
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <input type="hidden" value="@Model.DetailCurrentUserId" name="UserId" />
+                    }
+
+                    <div class="modal-footer">
+                        <input type="submit" value="YES" class="btn btn-primary" />
+                        <input type="button" class="btn btn-outline-dark" data-dismiss="modal" value="NO" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form method="post" asp-controller="User" asp-action="Review">
+        <div class="modal fade" id="WriteReviewModel" tabindex="-1" role="dialog" aria-labelledby="WriteReviewModel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p>what do you think of this movie?</p>
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-10">
+                                <input type="text" class="form-control" placeholder="Review text" name="ReviewText">
+                            </div>
+                            <div class="col-2">
+                                <input type="number" class="form-control" placeholder="Rating" min="1" max="10" name="Rating">
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" value="@Model.DetailMovie.Id" name="MovieId" />
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <input type="hidden" value="@Model.DetailCurrentUserId" name="UserId" />
+                    }
+
+                    <div class="modal-footer">
+                        <input type="submit" value="YES" class="btn btn-primary" />
+                        <input type="button" class="btn btn-outline-dark" data-dismiss="modal" value="NO" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>

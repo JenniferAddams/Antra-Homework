@@ -1,0 +1,26 @@
+﻿@*@model List<Movie>
+@{
+    ViewData["Title"] = "Index";
+}
+<h1>List of Top Movies</h1>*@
+@*we need to tell our View whats the data it is receiving*@
+@*in this case its receiving List of Movies*@
+@*I wanna use HTML table or HTMl UL*@
+@*Razor Views combine C# with HTML and they are very powerful and Developer friendly*@
+@*1. Place @model on top of the view with the expecting data type
+    2. We can access the actual data using Model (ASP.NET) alias for @model*@
+
+
+
+@model IEnumerable<MovieStore.Core.Entities.Movie>
+<div>
+    <div class="container-fluid">
+        <div class="row">
+            @foreach(var movie in Model)
+            {
+                <partial name="_MovieCard" model="movie"/>
+            }
+
+        </div>
+    </div>
+</div>

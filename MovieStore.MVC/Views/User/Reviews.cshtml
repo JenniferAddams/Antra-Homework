@@ -1,0 +1,11 @@
+﻿@model IEnumerable<MovieStore.Core.Entities.Review>
+<h1>Movies You have purchased</h1>
+
+            <h3>All Reviews that made by user are:</h3>
+            
+            @foreach (var review in Model)
+            {
+                @review.ReviewText
+                <br />
+
+            }
